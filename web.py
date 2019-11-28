@@ -10,6 +10,7 @@ import os
 
 #PARTE2
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'XYZ')
 
 #PARTE3
 @app.route('/', methods=['GET'])
