@@ -12,7 +12,7 @@ import os
 app = Flask(__name__)
 
 #PARTE3
-@app.route('/api/apriori', methods=['GET'])
+@app.route('/', methods=['GET'])
 def getapriori():
 
     store_data = pd.read_csv('sale.csv')
