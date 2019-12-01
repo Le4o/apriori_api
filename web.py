@@ -6,11 +6,61 @@ import numpy as np
 import pandas as pd
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import apriori
+from collections import *
+from abc_analysis import abc_analysis
 import os
 
 #PARTE2
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'XYZ')
+
+@app.route('/curva', methods=['GET'])
+def curva_abc():
+    data = []
+
+    store_data = pd.read_csv('sale.csv')
+    df = pd.DataFrame(store_data, columns=['descricao'])
+
+    itens = [df.loc[i, 'descricao'] for i in range(df['descricao'].count())]
+
+    itens = sorted(itens)
+
+    totalItens = df['descricao'].count()
+    cat_C = (1/totalItens)
+    cat_B = (2/totalItens)
+    cat_A = (4/totalItens)
+
+    print(cat_A)
+    print(cat_B)
+    print(cat_C)
+
+    anterior = itens[0]
+    count = 1
+    A = []
+    B = []
+    C = []
+
+    for item in itens:
+        if item == anterior:
+            count+=1
+        else:
+
+            frequencia = count/totalItens
+            #print(frequencia)
+            if frequencia >= cat_A:
+                C.append([anterior, 'A', frequencia])
+            elif frequencia <= cat_B and frequencia > cat_C:
+                B.append([anterior,'B', frequencia])
+            elif frequencia <= cat_C:
+                A.append([anterior, 'C', frequencia])
+
+            anterior = item
+            count=1
+
+    data.append(A)
+    data.append(B)
+    data.append(C)
+    return jsonify({'curva': data})
 
 #PARTE3
 @app.route('/', methods=['GET'])
@@ -42,10 +92,12 @@ def getapriori():
     data_list = data.values.tolist()
     
     for x in range(len(data_list)):
-        for y in range(2):
+        
+        for _ in range(2):
             data_list[x][1] = list(data_list[x][1])
             val = np.float32(data_list[x][0]).item()
             data_list[x][0] = val
+
             for z in range(len(data_list[x][1])):
                 val = np.uint32(data_list[x][1][z]).item()
                 data_list[x][1][z] = val
