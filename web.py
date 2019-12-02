@@ -6,8 +6,6 @@ import numpy as np
 import pandas as pd
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import apriori
-from collections import *
-from abc_analysis import abc_analysis
 import os
 
 #PARTE2
@@ -28,18 +26,14 @@ def curva_abc():
     totalItens = df['descricao'].count()
     cat_C = (1/totalItens)
     cat_B = (2/totalItens)
-    cat_A = (4/totalItens)
-
-    print(cat_A)
-    print(cat_B)
-    print(cat_C)
+    cat_A = (3/totalItens)
 
     anterior = itens[0]
     count = 1
     A = []
     B = []
     C = []
-
+    
     for item in itens:
         if item == anterior:
             count+=1
@@ -48,6 +42,7 @@ def curva_abc():
             frequencia = count/totalItens
             #print(frequencia)
             if frequencia >= cat_A:
+
                 C.append([anterior, 'A', frequencia])
             elif frequencia <= cat_B and frequencia > cat_C:
                 B.append([anterior,'B', frequencia])
@@ -57,13 +52,23 @@ def curva_abc():
             anterior = item
             count=1
 
+    itemsTotais = len(C) + len(B) + len(A)
+    
+    porcentagemC = [len(C)/itemsTotais]
+    porcentagemB = [len(B)/itemsTotais]
+    porcentagemA = [len(A)/itemsTotais]
+
+    data.append(porcentagemC)
+    data.append(porcentagemB)
+    data.append(porcentagemA)
+
     data.append(A)
     data.append(B)
     data.append(C)
     return jsonify({'curva': data})
 
 #PARTE3
-@app.route('/', methods=['GET'])
+@app.route('/apriori', methods=['GET'])
 def getapriori():
 
     store_data = pd.read_csv('sale.csv')
