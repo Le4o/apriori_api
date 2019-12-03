@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import apriori
+from abc import ABC, abstractmethod
 import os
 
 #PARTE2
@@ -65,7 +66,7 @@ def curva_abc():
     data.append(A)
     data.append(B)
     data.append(C)
-    return jsonify({'curva': data})
+    return jsonify({'data': data})
 
 #PARTE3
 @app.route('/apriori', methods=['GET'])
